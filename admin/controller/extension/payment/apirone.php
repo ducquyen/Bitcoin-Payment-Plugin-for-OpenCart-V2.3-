@@ -1,9 +1,23 @@
 <?php
+
 class ControllerExtensionPaymentApirone extends Controller {
 	private $error = array();
 
 	public function index() {
 		$this->load->language('extension/payment/apirone');
+		$this->load->model('extension/payment/apirone');
+
+		$chkinputthash = $this->model_extension_payment_apirone->check_tx();
+		if (!array_key_exists('input_thash', $chkinputthash->row)){
+			if($chkinputthash->num_rows != 0){
+				$this->model_extension_payment_apirone->update_to_v2();
+        	} else{
+        		$this->model_extension_payment_apirone->delete_tx_table();
+        		$this->model_extension_payment_apirone->install_tx_table();
+        	}
+		}
+
+		//$this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -27,13 +41,14 @@ class ControllerExtensionPaymentApirone extends Controller {
 		$data['entry_merchant'] = $this->language->get('entry_merchant');
 
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
-		$data['entry_canceled_status'] = $this->language->get('entry_canceled_status');
 		$data['entry_pending_status'] = $this->language->get('entry_pending_status');
 
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
+		$data['entry_merchantname'] = $this->language->get('entry_merchantname');
 		$data['entry_test_mode'] = $this->language->get('entry_test_mode');
+		$data['entry_confirmation'] = $this->language->get('entry_confirmation');
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
@@ -52,6 +67,8 @@ class ControllerExtensionPaymentApirone extends Controller {
 
 
 		$data['breadcrumbs'] = array();
+
+		$data['confirmations'] = array(1,2,3,4,5,6);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
@@ -91,13 +108,7 @@ class ControllerExtensionPaymentApirone extends Controller {
 		} else {
 			$data['apirone_order_status_id'] = $this->config->get('apirone_order_status_id');
 		}
-		
-		if (isset($this->request->post['apirone_canceled_status_id'])) {
-			$data['apirone_canceled_status_id'] = $this->request->post['apirone_canceled_status_id'];
-		} else {
-			$data['apirone_canceled_status_id'] = $this->config->get('apirone_canceled_status_id');
-		}
-		
+			
 		if (isset($this->request->post['apirone_pending_status_id'])) {
 			$data['apirone_pending_status_id'] = $this->request->post['apirone_pending_status_id'];
 		} else {
@@ -123,6 +134,11 @@ class ControllerExtensionPaymentApirone extends Controller {
 		} else {
 			$data['apirone_test_mode'] = $this->config->get('apirone_test_mode');
 		}
+		if (isset($this->request->post['apirone_confirmation'])) {
+			$data['apirone_confirmation'] = $this->request->post['apirone_confirmation'];
+		} else {
+			$data['apirone_confirmation'] = $this->config->get('apirone_confirmation');
+		}
 
 		if (isset($this->request->post['apirone_status'])) {
 			$data['apirone_status'] = $this->request->post['apirone_status'];
@@ -136,6 +152,12 @@ class ControllerExtensionPaymentApirone extends Controller {
 			$data['apirone_sort_order'] = $this->config->get('apirone_sort_order');
 		}
 
+		if (isset($this->request->post['apirone_merchantname'])) {
+			$data['apirone_merchantname'] = $this->request->post['apirone_merchantname'];
+		} else {
+			$data['apirone_merchantname'] = $this->config->get('apirone_merchantname');
+		}
+
 		if (isset($this->request->post['apirone_sort_canceled'])) {
 			$data['apirone_sort_canceled'] = $this->request->post['apirone_sort_canceled'];
 		} else {
@@ -147,6 +169,8 @@ class ControllerExtensionPaymentApirone extends Controller {
 		} else {
 			$data['apirone_sort_pending'] = $this->config->get('apirone_sort_pending');
 		}
+
+		echo $this->config->get('apirone_sort_pending');
 		
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -165,5 +189,23 @@ class ControllerExtensionPaymentApirone extends Controller {
 		}
 
 		return !$this->error;
+	}
+
+	public function install() {
+		$this->load->model('extension/payment/apirone');
+		$this->load->model('setting/setting');
+		$data = array('apirone_test_mode' => '0', 'apirone_pending_status_id' => '1', 'apirone_order_status_id' => '5');
+		$this->model_setting_setting->editSetting('apirone', $data);		
+		$this->model_extension_payment_apirone->install_tx_table();
+		$this->model_extension_payment_apirone->install_sales_table();
+	}
+
+	public function uninstall() {
+		$this->load->model('setting/setting');
+		$this->load->model('extension/payment/apirone');
+		$data = array();
+		$this->model_setting_setting->editSetting('apirone', $data);	
+		$this->model_extension_payment_apirone->delete_tx_table();
+		$this->model_extension_payment_apirone->delete_sales_table();
 	}
 }

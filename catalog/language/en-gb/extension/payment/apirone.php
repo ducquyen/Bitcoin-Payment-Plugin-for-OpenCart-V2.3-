@@ -1,5 +1,33 @@
 <?php
-// Text
-$_['text_title'] = 'Apirone (pay with Bitcoin) <img src="catalog/view/theme/default/image/apirone.png" alt="">';
-$_['live_url'] = 'https://apirone.com/';
-$_['test_url'] = 'https://blockchainapi.org/api/receive';
+$_['text_title'] = 'Pay with Bitcoin <img src="catalog/view/theme/default/image/apirone.png" alt="">';
+$_['live_url'] = 'https://apirone.com/api/v1/receive';
+$_['test_url'] = 'https://apirone.com/api/v1/receive';
+$_['script'] = 'catalog/view/javascript/apirone/apirone.js';
+$_['style'] = 'catalog/view/theme/default/stylesheet/apirone.css';
+$_['please_send'] = 'Please send';
+$_['to_address'] = 'to address';
+$_['merchant'] = 'Merchant';
+$_['amount_to_pay'] =  'Amount to pay';
+$_['arrived_amount'] = 'Arrived amount';
+$_['remains_to_pay'] = 'Remains to pay';
+$_['date'] = 'Date';
+$_['transactions'] = 'Transaction(s)';
+$_['no_tx_yet'] = 'No TX yet';
+$_['status'] = 'Status';
+$_['loading_data'] = 'Loading data';
+$_['status'] = 'Status';
+$_['if_you_unable_complete'] = 'If you are unable to complete your payment, you can try again later to place a new order with saved cart.';
+$_['you_can_pay_partially'] = 'You can pay partially, but please do not close this window before your next payment to prevent loss of bitcoin address and invoice number.';
+$_['payment_complete'] = 'Payment complete';
+$_['tx_in_network'] = 'Transaction in network (income amount';
+$_['waiting_payment'] = 'Waiting payment';
+$_['confirmations_count'] = 'Confirmations count';
+$_['thank_you'] = 'Thank You! Payment done. Order finished.';
+$_['pagename'] = 'Pay with Bitcoin';
+$_['heading_title'] = 'Pay with Bitcoin';
+$_['go_to_cart'] = 'Back to cart';
+$_['no_input_address'] = 'No Input Address from Apirone :( Go to previous step and click Next again';
+$_['not_exchange'] = 'Apirone couldn\'t exchange';
+$_['to'] = 'to';
+$_['and_pay'] = 'and pay';
+$_['with_uncomfirmed'] = 'with uncomfirmed';
